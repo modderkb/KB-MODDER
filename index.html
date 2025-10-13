@@ -1,221 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Prediction AI - Live</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Private Server — Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
-    body {
-      background: linear-gradient(to right, #000000, #0f0f0f);
-      color: #00ffcc;
-      font-family: 'Orbitron', sans-serif;
-      margin: 0;
-      padding-bottom: 100px;
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,Arial;
+      background: linear-gradient(180deg,#07101a 0%, #071827 100%);
+      color:#e6eef6;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
     }
-    .card, .box {
-      max-width: 600px;
-      margin: 40px auto;
-      background: rgba(20, 20, 20, 0.95);
-      border-radius: 20px;
-      padding: 30px 25px;
-      border: 2px solid #00ffff;
-      display: none;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from {
-        box-shadow: 0 0 10px #0ff, 0 0 30px #0ff;
-      }
-      to {
-        box-shadow: 0 0 30px #0ff, 0 0 80px #0ff;
-      }
-    }
-    .card-active { display: block; }
-    h2 {
+    .container{width:100%;max-width:420px;background:rgba(255,255,255,0.05);border-radius:14px;padding:22px;box-shadow:0 8px 40px rgba(2,6,23,0.6);}
+    .title{font-size:20px;font-weight:700;text-align:center;}
+    .qr-card{margin-top:16px;background:#0f1724;border-radius:10px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+    .qr-card img{width:220px;max-width:100%;border-radius:8px;}
+    .price{font-weight:700;font-size:22px;color:#16a34a;margin-top:14px;text-align:center;}
+    .utr-section{margin-top:16px;}
+    label{font-size:13px;color:#98a0b3;display:block;margin-bottom:6px;}
+    input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.25);color:#fff;}
+    .verify-btn{margin-top:10px;width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(90deg,#16a34a,#10b981);color:#042018;font-weight:700;cursor:pointer;}
+    /* Toast */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background: #16a34a;
+      color: white;
       text-align: center;
-      color: #ffffff;
-      font-size: 36px;
-      margin-bottom: 30px;
-      text-shadow: 0 0 15px #ff0, 0 0 25px #f0f;
-    }
-    .label {
-      font-size: 14px;
-      color: #cccccc;
-      margin-top: 20px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-    .result {
-      font-size: 32px;
-      text-align: center;
-      margin: 15px 0 25px;
-      color: #00ffee;
-      animation: pulse 1.5s ease-in-out infinite alternate;
-    }
-    .big-small {
-      text-align: center;
-      font-size: 40px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 20px #0ff, 0 0 40px #00f;
-      background: linear-gradient(to right, #111, #1f1f1f);
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 30px #00ffff99;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); text-shadow: 0 0 10px #0f0; }
-      100% { transform: scale(1.1); text-shadow: 0 0 20px #ff0; color: #ff0; }
-    }
-    #historyBox {
-      margin-top: 25px;
-      padding: 15px;
-      background: #1a1a1a;
-      border-radius: 15px;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .history-entry {
-      margin: 8px 0;
-      font-size: 16px;
-      padding: 6px;
-      background: #222;
       border-radius: 8px;
-      box-shadow: 0 0 10px #00ffff44 inset;
+      padding: 14px;
+      position: fixed;
+      left: 50%;
+      bottom: 30px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+    #toast.show {
+      visibility: visible;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    @keyframes fadein {
+      from {bottom: 10px; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+    @keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 10px; opacity: 0;}
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="title">Private Server — VIP Connect</div>
 
-<!-- HOME -->
-<div class="box card-active" id="home">
-  <h2>NEXTGEN PREDICTOR</h2>
-  <div class="label"> Current Period</div>
-  <div class="result" id="periodDisplay" style="font-size: 20px">-</div>
-  <div class="label"> Predicted Numbers</div>
-  <div class="result" id="predictionDisplay">-</div>
-  <div class="big-small" id="bigSmallDisplay">-</div>
-  <div class="label">📜 Prediction History</div>
-  <div id="historyBox"></div>
-</div>
-
-<script>
-let lastPeriod = null;
-let pastResults = [];
-let historyLog = [];
-let useOpposite = false;
-
-function generatePeriodNumber() {
-  let now = new Date();
-  let utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-  let year = utc.getFullYear();
-  let month = String(utc.getMonth() + 1).padStart(2, '0');
-  let day = String(utc.getDate()).padStart(2, '0');
-  let minutes = utc.getHours() * 60 + utc.getMinutes();
-  return `${year}${month}${day}1000${10001 + minutes}`;
-}
-
-function smartAlternative(prediction) {
-  let group = prediction >= 5 ? [5,6,7,8,9] : [0,1,2,3,4];
-  let alternatives = group.filter(n => n !== prediction);
-  return alternatives[Math.floor(Math.random() * alternatives.length)];
-}
-
-function getPrediction(period) {
-  let prediction;
-  if (pastResults.length >= 5) {
-    let freq = Array(10).fill(0);
-    pastResults.slice(-15).forEach(n => freq[n]++);
-    const minFreq = Math.min(...freq);
-    const rare = freq.map((f, i) => f === minFreq ? i : null).filter(v => v !== null);
-
-    const last = pastResults[pastResults.length - 1];
-    const secondLast = pastResults[pastResults.length - 2];
-    const trend = (last + (last - secondLast) + 10) % 10;
-
-    prediction = rare.includes(trend)
-      ? trend
-      : rare[Math.floor(Math.random() * rare.length)];
-  } else {
-    const ai = parseInt(period.slice(-4)) % 2 === 0 ? "SMALL" : "BIG";
-    const sum9 = [...period.slice(-9)].reduce((s,d)=>s+parseInt(d),0);
-    const pred9 = (sum9 % 10 >= 5) ? 'SMALL' : 'BIG';
-    const pred10 = (parseInt(period.slice(-10)) % 10 >= 5) ? 'SMALL' : 'BIG';
-    const result = [ai, pred9, pred10].filter(p => p === 'BIG').length >= 2 ? 'BIG' : 'SMALL';
-
-    const base = useOpposite ? (result === 'BIG' ? 0 : 9) : (result === 'BIG' ? 9 : 0);
-    prediction = smartAlternative(base);
-  }
-
-  pastResults.push(prediction);
-  if (pastResults.length > 100) pastResults.shift();
-
-  const alt = smartAlternative(prediction);
-  return [prediction, alt];
-}
-
-function renderHistory() {
-  const box = document.getElementById("historyBox");
-  box.innerHTML = historyLog.map(entry => `
-    <div class="history-entry">
-      🕒 <b>${entry.period}</b> - Prediction: <span style="color:#00ffee">${entry.prediction.join(', ')}</span>
+    <div class="qr-card">
+      <!-- Your QR image -->
+      <img src="https://i.postimg.cc/506d2tT6/1760316003678-Screenshot-20251013-060945.jpg" alt="QR Code">
+      <div>Scan this QR to pay ₹199</div>
     </div>
-  `).join('');
-}
 
-async function fetchResultFromAPI() {
-  try {
-    const res = await fetch("https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        pageSize: 10,
-        pageNo: 1,
-        typeId: 1,
-        language: 0,
-        random: "4a0522c6ecd8410496260e686be2a57c",
-        signature: "334B5E70A0C9B8918B0B15E517E2069C",
-        timestamp: Math.floor(Date.now() / 1000)
-      })
-    });
-    const json = await res.json();
-    return json?.data?.list || [];
-  } catch (e) {
-    console.error("API error:", e);
-    return [];
-  }
-}
+    <div class="price">Pay ₹199 to connect private server</div>
 
-async function updatePrediction() {
-  const results = await fetchResultFromAPI();
-  if (results.length === 0) return;
+    <div class="utr-section">
+      <label for="manualUTR">Enter UTR / Transaction Reference</label>
+      <input type="text" id="manualUTR" maxlength="12" placeholder="Enter 12-digit UTR" />
+      <button class="verify-btn" onclick="submitPayment()">Verify & Submit</button>
+    </div>
+  </div>
 
-  const currentPeriod = generatePeriodNumber();
-  if (currentPeriod === lastPeriod) return;
-  lastPeriod = currentPeriod;
+  <!-- Toast -->
+  <div id="toast">UTR submitted successfully!</div>
 
-  const latest = results[0];
-  const actual = parseInt(latest.number);
-  pastResults.push(actual);
-  if (pastResults.length > 100) pastResults.shift();
+  <script>
+    const currentPlan = "Private Server";
+    const currentPrice = "999";
 
-  const [prediction, alt] = getPrediction(currentPeriod);
-  const sizeType = prediction >= 5 ? "BIG" : "SMALL";
-  const sizeColor = sizeType === "BIG" ? "#ff3366" : "#33ffcc";
+    function submitPayment() {
+      const utrInput = document.getElementById('manualUTR');
+      const utr = utrInput.value.trim();
 
-  document.getElementById("periodDisplay").textContent = ` ${currentPeriod}`;
-  document.getElementById("predictionDisplay").textContent = `${prediction}, ${alt}`;
-  document.getElementById("bigSmallDisplay").textContent = sizeType;
-  document.getElementById("bigSmallDisplay").style.color = sizeColor;
+      if (!utr || utr.length !== 12 || !/^\d+$/.test(utr)) {
+        alert('Please enter a valid 12-digit UTR number.');
+        utrInput.focus();
+        return;
+      }
 
-  historyLog.unshift({ period: currentPeriod, prediction: [prediction, alt] });
-  if (historyLog.length > 30) historyLog.pop();
-  renderHistory();
-}
+      const message = `Hello, X Trader,\nI have completed the payment for the ${currentPlan} plan (₹${currentPrice}).\n\nMy UTR is: ${utr}\n\nPlease verify and activate my plan.`;
+      window.open(`https://t.me/DESIBILLAL1?text=${encodeURIComponent(message)}`, '_blank');
 
-setInterval(updatePrediction, 5000);
-</script>
+      const toast = document.getElementById('toast');
+      toast.className = "show";
+
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+        utrInput.value = "";
+      }, 3000);
+    }
+  </script>
 </body>
 </html>
