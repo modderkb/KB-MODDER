@@ -13,47 +13,50 @@ body {
   padding: 0;
   font-family: 'Poppins', sans-serif;
   background: radial-gradient(circle at center, #14001f, #000000 70%);
-  overflow: hidden;
   color: white;
   text-align: center;
-  perspective: 1000px;
+  overflow: hidden;
 }
 
-/* Galaxy Background */
+/* Galaxy */
 .galaxy-layer {
   position: absolute;
-  width: 200%;
-  height: 200%;
+  width: 100%;
+  height: 100%;
   background: radial-gradient(white 1px, transparent 1px);
   background-size: 50px 50px;
   opacity: 0.15;
   animation: moveGalaxy 60s linear infinite;
+  z-index: 0;
 }
 
-.layer2 { 
-  opacity: 0.25; 
-  animation-duration: 100s; 
-}
+.layer2 { opacity: 0.25; animation-duration: 100s; }
 
 @keyframes moveGalaxy {
   from { transform: translate(0,0); }
   to { transform: translate(-500px,-500px); }
 }
 
-h1 {
+/* Main Content */
+.main-content {
+  position: relative;
+  z-index: 5;
   margin-top: 80px;
+}
+
+h1 {
   font-size: 3.5em;
   font-family: 'Great Vibes', cursive;
 }
 
 .glow-name {
   color: #ff99ff;
-  animation: glow 2s ease-in-out infinite alternate;
+  animation: glow 2s infinite alternate;
 }
 
 @keyframes glow {
-  from { text-shadow: 0 0 10px #ff4da6, 0 0 20px #9333ea; }
-  to { text-shadow: 0 0 25px #ff1a8c, 0 0 40px #c084fc; }
+  from { text-shadow: 0 0 10px #ff4da6; }
+  to { text-shadow: 0 0 40px #c084fc; }
 }
 
 .letter {
@@ -64,12 +67,6 @@ h1 {
   min-height: 120px;
 }
 
-.countdown {
-  margin-top: 15px;
-  font-size: 1.2em;
-  color: #ffccff;
-}
-
 button {
   padding: 12px 28px;
   font-size: 1.1em;
@@ -78,48 +75,55 @@ button {
   background: linear-gradient(45deg, #ff4da6, #9333ea);
   color: white;
   cursor: pointer;
-  transition: 0.3s;
   margin: 15px;
   box-shadow: 0 0 20px #ff4da6;
+  transition: 0.3s;
 }
 
-button:hover { 
-  transform: scale(1.1); 
-}
+button:hover { transform: scale(1.1); }
 
-.proposal {
-  margin-top: 20px;
+/* Modal Full Screen */
+.fullscreen-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #1a0028, #000000 80%);
   display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px;
+  z-index: 20;
+  text-align: center;
 }
 
+.fullscreen-modal h2 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.fullscreen-modal p {
+  max-width: 600px;
+  font-size: 1.3em;
+  color: #f3e8ff;
+}
+
+/* Floating Hearts */
 .heart {
   position: absolute;
   color: #ff4da6;
   font-size: 20px;
   animation: floatUp 6s linear infinite;
+  pointer-events: none;
+  z-index: 1;
 }
 
 @keyframes floatUp {
   0% { transform: translateY(0); opacity:1; }
   100% { transform: translateY(-800px); opacity:0; }
-}
-
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
-  padding: 30px;
-  border-radius: 25px;
-  box-shadow: 0 0 30px #ff4da6;
-  transition: 0.4s ease;
-  max-width: 420px;
-}
-
-.popup.active { 
-  transform: translate(-50%, -50%) scale(1); 
 }
 </style>
 </head>
@@ -129,23 +133,19 @@ button:hover {
 <div class="galaxy-layer"></div>
 <div class="galaxy-layer layer2"></div>
 
-<h1>My Universe Is <span class="glow-name">Sneha ✨</span></h1>
+<div class="main-content" id="mainContent">
 
-<div class="letter" id="typewriter"></div>
-<div class="countdown" id="countdown"></div>
+  <h1>My Universe Is <span class="glow-name">Sneha ✨</span></h1>
 
-<button onclick="showPopup()">Open Love Letter 💌</button>
-<button onclick="showProposal()">Special Question 💍</button>
+  <div class="letter" id="typewriter"></div>
 
-<!-- Proposal Section -->
-<div class="proposal" id="proposalBox">
-  <h2>Sneha, Do You Love Me? 💖</h2>
-  <button onclick="sayYes()">Yes 💕</button>
-  <button id="noBtn" onmouseover="moveNoButton()">No 😢</button>
+  <button onclick="openLetter()">Open Love Letter 💌</button>
+  <button onclick="openProposal()">Special Question 💍</button>
+
 </div>
 
-<!-- Love Letter Popup -->
-<div class="popup" id="lovePopup">
+<!-- LOVE LETTER FULLSCREEN -->
+<div class="fullscreen-modal" id="loveModal">
   <h2>Forever Yours 🌙</h2>
   <p>
     Sneha, across galaxies and stars,
@@ -154,7 +154,16 @@ button:hover {
     my peace,
     my forever love. 💖
   </p>
-  <button onclick="closePopup()">Close</button>
+  <button onclick="closeModal()">Close</button>
+</div>
+
+<!-- PROPOSAL FULLSCREEN -->
+<div class="fullscreen-modal" id="proposalModal">
+  <h2>Sneha, Do You Love Me? 💖</h2>
+  <button onclick="sayYes()">Yes 💕</button>
+  <button id="noBtn" onmouseover="moveNoButton()">No 😢</button>
+  <br><br>
+  <button onclick="closeModal()">Close</button>
 </div>
 
 <script>
@@ -171,10 +180,9 @@ setInterval(() => {
   setTimeout(() => heart.remove(), 6000);
 }, 700);
 
-/* Typewriter Effect */
+/* Typewriter */
 const text = "Just like the stars shine endlessly, my love for you grows endlessly. In this infinite galaxy, I found my forever in you, Sneha. 💜✨";
 let i = 0;
-
 function typeWriter() {
   if (i < text.length) {
     document.getElementById("typewriter").innerHTML += text.charAt(i);
@@ -184,49 +192,31 @@ function typeWriter() {
 }
 typeWriter();
 
-/* Countdown */
-const countdownElement = document.getElementById('countdown');
-const valentine = new Date(new Date().getFullYear(), 1, 14);
-
-function updateCountdown() {
-  const now = new Date();
-  let diff = valentine - now;
-
-  if (diff < 0) {
-    valentine.setFullYear(valentine.getFullYear() + 1);
-    diff = valentine - now;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  countdownElement.innerHTML =
-    `⏳ Countdown to Valentine's Day: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-}
-setInterval(updateCountdown, 1000);
-
-/* Popup */
-function showPopup() {
-  document.getElementById('lovePopup').classList.add('active');
+/* Open Love Letter */
+function openLetter() {
+  document.getElementById("mainContent").style.display = "none";
+  document.getElementById("loveModal").style.display = "flex";
 }
 
-function closePopup() {
-  document.getElementById('lovePopup').classList.remove('active');
+/* Open Proposal */
+function openProposal() {
+  document.getElementById("mainContent").style.display = "none";
+  document.getElementById("proposalModal").style.display = "flex";
 }
 
-/* Show Proposal */
-function showProposal() {
-  document.getElementById('proposalBox').style.display = 'block';
+/* Close Modal */
+function closeModal() {
+  document.getElementById("loveModal").style.display = "none";
+  document.getElementById("proposalModal").style.display = "none";
+  document.getElementById("mainContent").style.display = "block";
 }
 
 /* Yes Redirect */
 function sayYes() {
-  window.location.href = "https://modderkb.github.io/SERVER-AI-MAXX/"; // Replace with your link
+  window.location.href = "https://modderkb.github.io/SERVER-AI-MAXX/";
 }
 
-/* No Button Runs Away */
+/* No Button Move */
 function moveNoButton() {
   const btn = document.getElementById("noBtn");
   btn.style.position = "absolute";
