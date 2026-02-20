@@ -1,0 +1,585 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment - Free Fire Top-up</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #0f1419 0%, #1a2029 100%);
+        min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+        background: #fff;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e6e6e6;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo img {
+        height: 35px;
+        width: auto;
+    }
+
+    .header-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .profile {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #eaeaea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #999;
+        cursor: pointer;
+    }
+
+    /* ORDER SUMMARY */
+    .order-card {
+        background: #fff;
+        margin: 16px;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .order-card h2 {
+        margin: 0 0 16px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .order-card h2 i {
+        color: #ff6a2b;
+    }
+
+    .order-details {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .order-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .order-row:last-child {
+        border-bottom: none;
+        font-weight: 600;
+        font-size: 16px;
+        color: #ff0000;
+    }
+
+    .order-label {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .order-value {
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    /* PLAYER INFO */
+    .player-info {
+        background: #fff;
+        margin: 16px;
+        padding: 15px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .player-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff6a2b 0%, #ff0000 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .player-details h3 {
+        font-size: 16px;
+        margin: 0 0 4px;
+        color: #333;
+    }
+
+    .player-details p {
+        font-size: 13px;
+        color: #666;
+        margin: 0;
+    }
+
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    /* QR CODE SECTION */
+    .qr-card {
+        background: #fff;
+        margin: 16px;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+    .qr-card h2 {
+        margin: 0 0 20px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .qr-card h2 i {
+        color: #4CAF50;
+    }
+
+    .qr-container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 0 auto 15px;
+        display: inline-block;
+        border: 1px solid #eaeaea;
+    }
+
+    .qr-code {
+        width: 220px;
+        height: 220px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .qr-code img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 4px;
+    }
+
+    .qr-code-placeholder {
+        width: 100%;
+        height: 100%;
+        background: #f5f5f5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+    }
+
+    .qr-code-placeholder i {
+        font-size: 60px;
+        margin-bottom: 10px;
+        color: #999;
+    }
+
+    .upi-info {
+        font-size: 14px;
+        color: #666;
+        margin-top: 10px;
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 8px;
+        display: inline-block;
+        font-family: monospace;
+    }
+
+    /* PAYMENT METHODS */
+    .payment-card {
+        background: #fff;
+        margin: 16px;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+    .payment-card h2 {
+        margin: 0 0 20px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .payment-card h2 i {
+        color: #2196F3;
+    }
+
+    .payment-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .payment-option {
+        border-radius: 16px;
+        padding: 15px 10px;
+        text-align: center;
+        border: 2px solid #eaeaea;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fff;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .payment-option:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-color: #ff0000;
+    }
+
+    .payment-option:active {
+        transform: translateY(-1px);
+    }
+
+    .payment-option img {
+        height: 40px;
+        margin-bottom: 8px;
+        object-fit: contain;
+    }
+
+    .payment-option p {
+        margin: 0;
+        font-size: 14px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .payment-desc {
+        font-size: 11px;
+        color: #666;
+        margin-top: 4px;
+    }
+
+    /* PAYMENT METHOD ROWS */
+    .payment-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    /* FOOTER */
+    .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #999;
+        padding: 30px 10px 15px;
+        background: #fff;
+        margin-top: 10px;
+        border-top: 1px solid #eaeaea;
+    }
+
+    .footer a {
+        color: #999;
+        text-decoration: none;
+        margin: 0 6px;
+    }
+
+    /* LOADING */
+    .loading {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #ff0000;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+        color: white;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+        .payment-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .header {
+            padding: 10px 12px;
+        }
+        
+        .order-card, .player-info, .qr-card, .payment-card {
+            margin: 12px;
+            padding: 16px;
+        }
+    }
+</style>
+<link rel="stylesheet" href="css/all.min.css">
+</head>
+
+<body>
+
+<!-- HEADER WITH LOGO -->
+<div class="header">
+    <div class="header-left">
+        <div class="logo">
+            <!-- Free Fire Logo -->
+            <img src="images/logo.png" alt="Free Fire Logo">
+            <div class="header-title">Top Up Page</div>
+        </div>
+    </div>
+    <div class="profile" onclick="window.history.back()">
+        <i class="fas fa-times"></i>
+    </div>
+</div>
+
+<!-- ORDER SUMMARY -->
+<div class="order-card">
+    <h2><i class="fas fa-receipt"></i> Order Summary</h2>
+    <div class="order-details">
+        <div class="order-row">
+            <span class="order-label">Package:</span>
+            <span class="order-value">2180 Diamonds</span>
+        </div>
+        <div class="order-row">
+            <span class="order-label">Diamonds:</span>
+            <span class="order-value">2180 💎</span>
+        </div>
+        <div class="order-row">
+            <span class="order-label">Amount:</span>
+            <span class="order-value">₹499.00</span>
+        </div>
+        <div class="order-row">
+            <span class="order-label">Total Payable:</span>
+            <span class="order-value">₹499.00</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- QR CODE SECTION -->
+<div class="qr-card">
+    <h2><i class="fas fa-qrcode"></i> Scan QR to Pay</h2>
+    <div class="qr-container">
+        <div class="qr-code" id="qrCodeContainer">
+            <!-- Real QR Code using Google Charts API -->
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi%3A%2F%2Fpay%3Fpa%3D8506865196%40okbizaxis%26pn%3DFree+Fire+Topup%26am%3D499%26cu%3DINR%26tn%3DFree+Fire+2180+Diamonds+-+&format=png&margin=10" alt="QR Code for Payment" onerror="this.onerror=null; showQRFallback()">
+        </div>
+    </div>
+</div>
+
+<!-- PAYMENT METHODS - 2x2 Layout -->
+<div class="payment-card">
+    <h2><i class="fas fa-credit-card"></i> Quick Payment</h2>
+    
+    <!-- First Row: Paytm and PhonePe -->
+    <div class="payment-row">
+        <!-- Paytm -->
+        <a href="paytmmp://pay?pa=8506865196@okbizaxis&pn=Free%20Fire%20Topup&am=499&cu=INR&tn=Free+Fire+2180+Diamonds+-+" class="payment-option" onclick="showLoading('Opening Paytm...')">
+            <img src="images/paytm.png" alt="Paytm">
+            <p>Paytm</p>
+            <div class="payment-desc">Open in Paytm</div>
+        </a>
+
+        <!-- PhonePe -->
+        <a href="phonepe://pay?pa=8506865196@okbizaxis&pn=Free%20Fire%20Topup&am=499&cu=INR&tn=Free+Fire+2180+Diamonds+-+" class="payment-option" onclick="showLoading('Opening PhonePe...')">
+            <img src="images/phone-pe.png" alt="PhonePe">
+            <p>PhonePe</p>
+            <div class="payment-desc">Open in PhonePe</div>
+        </a>
+    </div>
+
+    <!-- Second Row: Google Pay and Any UPI App -->
+    <div class="payment-row">
+        <!-- Google Pay -->
+        <a href="tez://upi/pay?pa=8506865196@okbizaxis&pn=Free%20Fire%20Topup&am=499&cu=INR&tn=Free+Fire+2180+Diamonds+-+" class="payment-option" onclick="showLoading('Opening Google Pay...')">
+            <img src="images/google-pay.png" alt="Google Pay">
+            <p>Google Pay</p>
+            <div class="payment-desc">Open in GPay</div>
+        </a>
+
+        <!-- Any UPI App -->
+        <a href="upi://pay?pa=8506865196@okbizaxis&pn=Free%20Fire%20Topup&am=499&cu=INR&tn=Free+Fire+2180+Diamonds+-+" class="payment-option" onclick="showLoading('Opening UPI App...')">
+            <img src="images/wallet.png" alt="UPI">
+            <p>Any UPI App</p>
+            <div class="payment-desc">Open in UPI App</div>
+        </a>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    © Garena Online. All rights reserved.<br><br>
+    <a href="#">FAQ</a> |
+    <a href="#">Terms and Conditions</a> |
+    <a href="#">Privacy Policy</a>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">Opening Payment App...</div>
+</div>
+
+<script>
+// Show loading when clicking payment option
+function showLoading(message = 'Opening Payment App...') {
+    document.getElementById('loadingText').textContent = message;
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    
+    // Auto hide after 2 seconds (app should have opened)
+    setTimeout(() => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }, 2000);
+}
+
+// QR Code fallback
+function showQRFallback() {
+    const qrContainer = document.getElementById('qrCodeContainer');
+    qrContainer.innerHTML = `
+        <div class="qr-code-placeholder">
+            <i class="fas fa-qrcode"></i>
+            <div style="text-align: center; padding: 10px;">
+                <div>UPI ID: 8506865196@okbizaxis</div>
+                <div>Amount: ₹499.00</div>
+            </div>
+        </div>
+    `;
+}
+
+// Check QR code after page loads
+window.addEventListener('load', function() {
+    const qrImg = document.querySelector('.qr-code img');
+    if (!qrImg || qrImg.naturalWidth === 0) {
+        showQRFallback();
+    }
+    
+    // Check again after 2 seconds
+    setTimeout(() => {
+        const qrImg = document.querySelector('.qr-code img');
+        if (!qrImg || qrImg.naturalWidth === 0) {
+            showQRFallback();
+        }
+    }, 2000);
+});
+
+// Fallback if UPI app not installed
+setTimeout(() => {
+    // After 3 seconds, check if still on page
+    if (document.visibilityState === 'visible') {
+        // User might not have UPI app
+        // console.log("UPI app might not be installed");
+    }
+}, 3000);
+
+// Add click event to all payment options
+document.querySelectorAll('.payment-option').forEach(link => {
+    link.addEventListener('click', function(e) {
+        // Show loading immediately
+        const appName = this.querySelector('p').textContent;
+        showLoading(`Opening ${appName}...`);
+        
+        // Let the link work naturally
+        // No preventDefault() - let it redirect
+    });
+});
+
+// Handle back button in header
+document.querySelector('.profile').addEventListener('click', function() {
+    if (document.referrer && document.referrer.includes(window.location.hostname)) {
+        window.history.back();
+    } else {
+        window.location.href = './index.php';
+    }
+});
+</script>
+
+
+</body></html>
