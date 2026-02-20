@@ -716,7 +716,7 @@
                 const formData = new FormData();
                 formData.append('player_id', playerIdInput);
                 
-                const response = await fetch('http://freefire-top-up.shop/ff/verify.php', {
+                const response = await fetch('https://freefire-top-up.shop/ff/verify.php', {
                     method: 'POST',
                     body: formData
                 });
